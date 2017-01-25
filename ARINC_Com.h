@@ -1,3 +1,5 @@
+#ifndef ARINC_COM_H
+#define ARINC_COM_H
 
 #define MAXLGMSG 1024
 #define LNGHOST 128
@@ -54,3 +56,4 @@ public:
 	int ReadSamplingMsg(char*);
 };
 
+#endif
