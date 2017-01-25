@@ -11,7 +11,8 @@
 
 #include "config_kernel.h"
 
-pid_t pid[N]; // table of pid, one per partition 
+pid_t pid[TFRAME]; // Major Frame repartition
+pid_t pidList[N]; // table of pid, one per partition 
 
 int Tperiod[N]; // table of periods, i.e. time budget per partition
 
@@ -33,16 +34,20 @@ if ((argc==0) || (argc==1) ) {
 }
 
 // Initialisation of the periods
-Tperiod[0]=TIME_P1;
-Tperiod[1]=TIME_P2;
-Tperiod[2]=TIME_P3;
+Tperiod[0]=TIME_PM;
+Tperiod[1]=TIME_SM;
+Tperiod[2]=TIME_CT;
 
 // Main body of the program
 
 // Reading partition ids (pids)
-	pid[0] = atoi(argv[1]) ; // FIRST process-partition P1
-	pid[1] = atoi(argv[2]) ; // SECOND process-partition P2
-	pid[2] = atoi(argv[3]) ; // THIRD process-partition P3
+	pid[0] = atoi(argv[1]) ; // FIRST process-partition PM
+	pid[1] = atoi(argv[2]) ; // SECOND process-partition SM
+	pid[2] = atoi(argv[1]) ; // FIRST process-partition PM
+	pid[3] = atoi(argv[1]) ; // FIRST process-partition PM
+	pid[4] = atoi(argv[2]) ; // SECOND process-partition SM
+	pid[5] = atoi(argv[1]) ; // FIRST process-partition PM
+	pid[6] = atoi(argv[3]) ; // THIRD process-partition CT
 
 printf("********* LIST OF PARTITION IDS************\n");
 
@@ -57,7 +62,7 @@ for (i=0; i<N; i++)
 printf("********* STOPPING ALL PARTITION IDS************\n");
 
 for (i=0; i<N; i++){
-        printf("STOP - P%d:     %d\n",i,pid[i]);
+    printf("STOP - P%d:     %d\n",i,pid[i]);
 	kill (pid[i],  SIGSTOP);
 }
 
@@ -67,7 +72,6 @@ printf("********* All partitions must be stopped  ************\n");
 sleep (10);
 
 printf("********* STARTING SCHEDULING LOOP ************\n");
-
 
 active_p=0; // active process active_p set to 0 (1st process in major frame)
 
@@ -86,7 +90,7 @@ while (1) {  // Scheduler infinite loop
 
 	// set active_p to next (modulo N, number of partitions)
 	
-	active_p=(active_p + 1) % N;
+	active_p=(active_p + 1) % TFRAME;
 	
 } // end of while - end of main loop
 
